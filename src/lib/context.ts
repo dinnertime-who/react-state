@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from "react";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef } from 'react';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 
 export type SimpleContext<T> = {
   getName(): string;
@@ -11,7 +11,7 @@ class SimpleScopedContext<T> implements SimpleContext<T> {
   constructor(
     private readonly name: string, //
     private readonly queryClient: QueryClient,
-    private readonly initialValue: T
+    private readonly initialValue: T,
   ) {}
 
   getName() {
@@ -27,10 +27,7 @@ class SimpleScopedContext<T> implements SimpleContext<T> {
 
 class SimpleGlobalContext<T> implements SimpleContext<T> {
   private readonly name = crypto.randomUUID();
-  constructor(
-    private readonly queryClient: QueryClient,
-    private readonly initialValue: T
-  ) {}
+  constructor(private readonly queryClient: QueryClient, private readonly initialValue: T) {}
 
   getName() {
     return this.name;
@@ -44,11 +41,7 @@ class SimpleGlobalContext<T> implements SimpleContext<T> {
 }
 
 export const createSimpleContext = <T>(initialValue: T): SimpleContext<T> => {
-  return new SimpleScopedContext(
-    SimpleScopedContext.name,
-    new QueryClient(),
-    initialValue
-  );
+  return new SimpleScopedContext(SimpleScopedContext.name, new QueryClient(), initialValue);
 };
 
 const globalQueryClient = new QueryClient();
@@ -72,14 +65,12 @@ export const useSimpleContext = <T>(context: SimpleContext<T>) => {
       gcTime: Infinity,
       retry: 1,
     },
-    context.getQueryClient()
+    context.getQueryClient(),
   );
 
-  const setData = (
-    newValue: ((prevVal: T) => T) | ((prevVal: T) => Promise<T>)
-  ) => {
+  const setData = (newValue: (prevVal: T) => Promise<T> | T) => {
     Promise.resolve(newValue(data || context.getInitialValue())).then((value) =>
-      context.getQueryClient().setQueryData([context.getName()], value)
+      context.getQueryClient().setQueryData([context.getName()], value),
     );
   };
 
@@ -97,7 +88,7 @@ export const useSimpleContext = <T>(context: SimpleContext<T>) => {
     compute: <R>(computeFn: (_data: T) => R) =>
       useMemo(() => computeFn(data || context.getInitialValue()), [computeFn]),
     /* eslint-disable */
-    effect: (effectFn: (_data: T) => Promise<void> | ((_data: T) => void)) =>
+    effect: (effectFn: (_data: T) => Promise<void> | void) =>
       useEffect(() => {
         effectFn(data || context.getInitialValue());
       }, [effectFn]),
