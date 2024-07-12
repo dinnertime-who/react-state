@@ -69,7 +69,7 @@ export const useSimpleContext = <T>(context: SimpleContext<T>) => {
   );
 
   const setData = (newValue: (prevVal: T) => Promise<T> | T) => {
-    Promise.resolve(newValue(data || context.getInitialValue())).then((value) =>
+    Promise.resolve(newValue(data ?? context.getInitialValue())).then((value) =>
       context.getQueryClient().setQueryData([context.getName()], value),
     );
   };
@@ -82,15 +82,15 @@ export const useSimpleContext = <T>(context: SimpleContext<T>) => {
   }, [context]);
 
   return {
-    value: (data || context.getInitialValue()) as T,
+    value: (data ?? context.getInitialValue()) as T,
     set: setData,
     /* eslint-disable */
     compute: <R>(computeFn: (_data: T) => R) =>
-      useMemo(() => computeFn(data || context.getInitialValue()), [computeFn]),
+      useMemo(() => computeFn(data ?? context.getInitialValue()), [computeFn]),
     /* eslint-disable */
     effect: (effectFn: (_data: T) => Promise<void> | void) =>
       useEffect(() => {
-        effectFn(data || context.getInitialValue());
+        effectFn(data ?? context.getInitialValue());
       }, [effectFn]),
   };
 };
