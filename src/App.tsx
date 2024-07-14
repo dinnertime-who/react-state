@@ -1,7 +1,7 @@
-import { useSimpleState } from "./lib";
+import { useSimpleState } from './lib';
 
 function App() {
-  const { value, set } = useSimpleState({ name: "hey", count: 0 });
+  const { value, dispatch } = useSimpleState({ name: 'hey', count: 0 });
 
   return (
     <>
@@ -10,14 +10,9 @@ function App() {
       <div className="card">
         <button
           onClick={() =>
-            set(
+            dispatch(
               async (prev) =>
-                new Promise((resolve) =>
-                  setTimeout(
-                    () => resolve({ ...prev, count: prev.count + 1 }),
-                    1000
-                  )
-                )
+                new Promise((resolve) => setTimeout(() => resolve({ ...prev, count: prev.count + 1 }), 1000)),
             )
           }
         >
@@ -27,9 +22,7 @@ function App() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
     </>
   );
 }

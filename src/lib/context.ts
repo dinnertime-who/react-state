@@ -1,19 +1,23 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { QueryClient, useQuery } from '@tanstack/react-query';
 
-export type SimpleContext<T> = {
-  getName(): string;
-  getQueryClient(): QueryClient;
-  getInitialValue(): T;
+export type ContextDispatcher<T> = (prevVal: T) => Promise<T> | T;
+export type ContextReducer<T> = (prevVal: T) => Promise<Partial<T>> | Partial<T>;
+
+type UseSimpleContextReturn<T, R> = {
+  value: T;
+  isDispatching: boolean;
+  dispatch: R;
+  compute: <U>(computeFn: (_data: T) => U) => U;
+  effect: (effectFn: (_data: T) => Promise<void> | void) => void;
 };
 
-class SimpleScopedContext<T> implements SimpleContext<T> {
+export abstract class SimpleContext<T> {
   constructor(
-    private readonly name: string, //
-    private readonly queryClient: QueryClient,
-    private readonly initialValue: T,
+    protected readonly name: string,
+    protected readonly queryClient: QueryClient,
+    protected readonly initialValue: T,
   ) {}
-
   getName() {
     return this.name;
   }
@@ -23,34 +27,76 @@ class SimpleScopedContext<T> implements SimpleContext<T> {
   getInitialValue() {
     return this.initialValue;
   }
-}
-
-class SimpleGlobalContext<T> implements SimpleContext<T> {
-  private readonly name = crypto.randomUUID();
-  constructor(private readonly queryClient: QueryClient, private readonly initialValue: T) {}
-
-  getName() {
-    return this.name;
-  }
-  getQueryClient() {
-    return this.queryClient;
-  }
-  getInitialValue() {
-    return this.initialValue;
+  clone(): SimpleContext<T> {
+    throw new Error('Method Not Implemented');
   }
 }
 
-export const createSimpleContext = <T>(initialValue: T): SimpleContext<T> => {
-  return new SimpleScopedContext(SimpleScopedContext.name, new QueryClient(), initialValue);
+class SimpleScopedContext<T> extends SimpleContext<T> {
+  constructor(queryClient: QueryClient, initialValue: T) {
+    super(SimpleScopedContext.name, queryClient, initialValue);
+  }
+  clone(): SimpleContext<T> {
+    return new SimpleScopedContext(new QueryClient(), this.initialValue);
+  }
+}
+
+class SimpleGlobalContext<T> extends SimpleContext<T> {
+  constructor(
+    queryClient: QueryClient, //
+    initialValue: T,
+  ) {
+    super(crypto.randomUUID(), queryClient, initialValue);
+  }
+  clone(): SimpleContext<T> {
+    return new SimpleGlobalContext(this.queryClient, this.initialValue);
+  }
+}
+
+class SimpleReducedContext<T> extends SimpleContext<T> {
+  private readonly reducerMap = new Map<string, ContextReducer<T>>();
+
+  constructor(queryClient: QueryClient, initialValue: T, initialReducer?: Map<string, ContextReducer<T>>) {
+    super(SimpleScopedContext.name, queryClient, initialValue);
+    if (initialReducer) this.reducerMap = initialReducer;
+  }
+  clone(): SimpleContext<T> {
+    return new SimpleReducedContext(new QueryClient(), this.initialValue, this.reducerMap);
+  }
+  registReducer(name: string, reducer: ContextReducer<T>) {
+    this.reducerMap.set(name, reducer);
+    return this;
+  }
+  getReducer(name: string, prevVal: T) {
+    const reducer = this.reducerMap.get(name);
+    if (!reducer) {
+      throw new Error('등록되지 않은 reducer를 호출하였습니다.');
+    }
+    return reducer(prevVal);
+  }
+}
+
+export const createSimpleContext = <T>(initialValue: T) => {
+  return new SimpleScopedContext(new QueryClient(), initialValue);
 };
 
 const globalQueryClient = new QueryClient();
-
-export const createGlobalContext = <T>(initialValue: T): SimpleContext<T> => {
+export const createGlobalContext = <T>(initialValue: T) => {
   return new SimpleGlobalContext(globalQueryClient, initialValue);
 };
 
-export const useSimpleContext = <T>(context: SimpleContext<T>) => {
+export const createReducedContext = <T>(initialValue: T) => {
+  return new SimpleReducedContext(new QueryClient(), initialValue);
+};
+
+export function useSimpleContext<T>(
+  context: SimpleReducedContext<T>,
+): UseSimpleContextReturn<T, (name: string) => void>;
+export function useSimpleContext<T>(
+  context: SimpleContext<T>,
+): UseSimpleContextReturn<T, (newValue: T | ContextDispatcher<T>) => void>;
+export function useSimpleContext<T>(context: SimpleContext<T>) {
+  const [isDispatching, setIsDispatching] = useState(false);
   const { data } = useQuery(
     {
       queryKey: [context.getName()],
@@ -68,11 +114,24 @@ export const useSimpleContext = <T>(context: SimpleContext<T>) => {
     context.getQueryClient(),
   );
 
-  const setData = (newValue: (prevVal: T) => Promise<T> | T) => {
-    Promise.resolve(newValue(data ?? context.getInitialValue())).then((value) =>
-      context.getQueryClient().setQueryData([context.getName()], value),
-    );
-  };
+  const dispatch =
+    context instanceof SimpleReducedContext
+      ? (name: string) => {
+          setIsDispatching(true);
+          Promise.resolve((context as SimpleReducedContext<T>).getReducer(name, data ?? context.getInitialValue()))
+            .then((value) => context.getQueryClient().setQueryData([context.getName()], { ...data, ...value }))
+            .then(() => setIsDispatching(false));
+        }
+      : (newValue: T | ContextDispatcher<T>) => {
+          setIsDispatching(true);
+          Promise.resolve(
+            typeof newValue === 'function'
+              ? (newValue as ContextDispatcher<T>)(data ?? context.getInitialValue())
+              : newValue,
+          )
+            .then((value) => context.getQueryClient().setQueryData([context.getName()], value))
+            .then(() => setIsDispatching(false));
+        };
 
   useEffect(() => {
     return () => {
@@ -83,19 +142,31 @@ export const useSimpleContext = <T>(context: SimpleContext<T>) => {
 
   return {
     value: (data ?? context.getInitialValue()) as T,
-    set: setData,
+    isDispatching,
+    dispatch,
     /* eslint-disable */
     compute: <R>(computeFn: (_data: T) => R) =>
       useMemo(() => computeFn(data ?? context.getInitialValue()), [computeFn]),
     /* eslint-disable */
     effect: (effectFn: (_data: T) => Promise<void> | void) =>
       useEffect(() => {
-        effectFn(data ?? context.getInitialValue());
+        Promise.resolve(effectFn(data ?? context.getInitialValue()));
       }, [effectFn]),
   };
-};
+}
 
-export const useSimpleState = <T>(initialValue: T) => {
-  const context = useRef(createSimpleContext(initialValue));
+export function useSimpleState<T>(context: SimpleReducedContext<T>): UseSimpleContextReturn<T, (name: string) => void>;
+export function useSimpleState<T>(
+  context: SimpleContext<T>,
+): UseSimpleContextReturn<T, (newValue: T | ContextDispatcher<T>) => void>;
+export function useSimpleState<T>(
+  initialValue: T,
+): UseSimpleContextReturn<T, (newValue: T | ContextDispatcher<T>) => void>;
+export function useSimpleState<T>(initialValue: T | SimpleReducedContext<T> | SimpleContext<T>) {
+  const context = useRef(
+    initialValue instanceof Object && 'clone' in initialValue //
+      ? initialValue.clone()
+      : createSimpleContext(initialValue),
+  );
   return useSimpleContext(context.current);
-};
+}
