@@ -85,8 +85,9 @@ export const createGlobalContext = <T>(initialValue: T) => {
   return new SimpleGlobalContext(globalQueryClient, initialValue);
 };
 
-export const createReducedContext = <T>(initialValue: T) => {
-  return new SimpleReducedContext(new QueryClient(), initialValue);
+export const createReducedContext = <T>(initialValue: T, option: { global: boolean } = { global: false }) => {
+  const { global } = option;
+  return new SimpleReducedContext(global ? globalQueryClient : new QueryClient(), initialValue);
 };
 
 export function useSimpleContext<T>(
@@ -135,7 +136,7 @@ export function useSimpleContext<T>(context: SimpleContext<T>) {
 
   useEffect(() => {
     return () => {
-      if (context instanceof SimpleGlobalContext) return;
+      if (context.getQueryClient() === globalQueryClient) return;
       context.getQueryClient().resetQueries({ queryKey: [context.getName()] });
     };
   }, [context]);
