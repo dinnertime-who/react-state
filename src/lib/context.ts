@@ -152,7 +152,7 @@ export function useSimpleContext<T>(context: SimpleContext<T>) {
     effect: (effectFn: (_data: T) => Promise<void> | void) =>
       useEffect(() => {
         Promise.resolve(effectFn(data ?? context.getInitialValue()));
-      }, [effectFn]),
+      }, [data]),
   };
 }
 
