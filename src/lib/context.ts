@@ -120,7 +120,14 @@ export function useSimpleContext<T>(context: SimpleContext<T>) {
       ? (name: string) => {
           setIsDispatching(true);
           Promise.resolve((context as SimpleReducedContext<T>).getReducer(name, data ?? context.getInitialValue()))
-            .then((value) => context.getQueryClient().setQueryData([context.getName()], { ...data, ...value }))
+            .then((value) =>
+              context
+                .getQueryClient()
+                .setQueryData(
+                  [context.getName()],
+                  typeof data === 'object' && !(data instanceof Array) ? { ...data, ...value } : value,
+                ),
+            )
             .then(() => setIsDispatching(false));
         }
       : (newValue: T | ContextDispatcher<T>) => {
