@@ -204,9 +204,9 @@ class SimpleHttpContext<R, C> {
 export const createSimpleHttpContext = <R, C>(
   callback: (dependancyState: C[]) => Promise<R> | R,
   dependancyContext: SimpleContext<C>,
-  option: { isGlobal: boolean } = { isGlobal: false },
+  option: { queryClient: QueryClient } = { queryClient: globalQueryClient },
 ) => {
-  return new SimpleHttpContext(callback, dependancyContext, option.isGlobal ? globalQueryClient : new QueryClient());
+  return new SimpleHttpContext(callback, dependancyContext, option.queryClient);
 };
 
 export const useSimpleHttpContext = <R, C>(context: SimpleHttpContext<R, C>) => {
