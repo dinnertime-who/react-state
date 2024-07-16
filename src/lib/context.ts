@@ -178,3 +178,71 @@ export function useSimpleState<T>(initialValue: T | SimpleReducedContext<T> | Si
   );
   return useSimpleContext(context.current);
 }
+
+class SimpleHttpContext<R, C> {
+  private readonly name = crypto.randomUUID();
+  constructor(
+    private readonly callback: (dependancyState: C[]) => Promise<R> | R,
+    private readonly dependancyContext: SimpleContext<C>,
+    private readonly queryClient: QueryClient,
+  ) {}
+
+  getName() {
+    return this.name;
+  }
+  getDependancy() {
+    return this.dependancyContext;
+  }
+  getCallback() {
+    return this.callback;
+  }
+  getQueryClient() {
+    return this.queryClient;
+  }
+}
+
+export const createSimpleHttpContext = <R, C>(
+  callback: (dependancyState: C[]) => Promise<R> | R,
+  dependancyContext: SimpleContext<C>,
+  option: { isGlobal: boolean } = { isGlobal: false },
+) => {
+  return new SimpleHttpContext(callback, dependancyContext, option.isGlobal ? globalQueryClient : new QueryClient());
+};
+
+export const useSimpleHttpContext = <R, C>(context: SimpleHttpContext<R, C>) => {
+  const dependancy = context.getDependancy();
+  const callback = context.getCallback();
+  const queryClient = context.getQueryClient();
+  const name = context.getName();
+
+  const { value: dependancyState } = useSimpleContext(dependancy);
+
+  const { data, refetch, isFetching, error } = useQuery(
+    {
+      queryKey: [dependancyState, name],
+      queryFn: ({ queryKey }) => {
+        const state = queryKey.toSpliced(queryKey.length - 1, 1) as C[];
+        return callback(state);
+      },
+    },
+    queryClient,
+  );
+
+  return {
+    value: data,
+    refetch,
+    isFetching,
+    error,
+    effect: (effectFn: (_data: R | undefined) => Promise<void> | void) => {
+      // eslint-disable-next-line
+      useEffect(() => {
+        Promise.resolve(effectFn(data));
+        // eslint-disable-next-line
+      }, [data]);
+    },
+    compute: <CR>(computeFn: (_data: R | undefined) => CR) => {
+      // eslint-disable-next-line
+      return useMemo(() => computeFn(data), [data]);
+    },
+  };
+};
