@@ -180,7 +180,7 @@ export function useSimpleState<T>(initialValue: T | SimpleReducedContext<T> | Si
 }
 
 class SimpleHttpContext<R, C> {
-  private readonly name = crypto.randomUUID();
+  private readonly name: string = crypto.randomUUID();
   constructor(
     private readonly callback: (dependancyState: C[]) => Promise<R> | R,
     private readonly dependancyContext: SimpleContext<C>,
@@ -229,10 +229,12 @@ export const useSimpleHttpContext = <R, C>(context: SimpleHttpContext<R, C>) => 
   );
 
   return {
-    value: data,
-    refetch,
-    isFetching,
-    error,
+    value: data as R | undefined,
+    refetch: (() => {
+      refetch();
+    }) as () => Promise<void>,
+    isFetching: isFetching as boolean,
+    error: error as Error | null,
     effect: (effectFn: (_data: R | undefined) => Promise<void> | void) => {
       // eslint-disable-next-line
       useEffect(() => {
