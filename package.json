@@ -1,54 +1,23 @@
 {
-  "name": "@dinnertime/react-state",
-  "description": "Easy and simple React state management - 리액트 상태관리를 쉽고 간단하게",
-  "author": "dinnertime-who",
-  "license": "MIT",
-  "private": false,
-  "version": "0.0.4",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dinnertime-who/react-state.git",
-    "directory": "/"
-  },
-  "sideEffects": false,
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.umd.cjs"
-    }
-  },
-  "type": "module",
+  "name": "root",
+  "private": "true",
+  "version": "0.1.0",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "react-app": "pnpm --filter react-app",
+    "next-app": "pnpm --filter next-app",
+    "react-state": "pnpm --filter @dinnertime/react-state",
+    "react-hooks": "pnpm --filter @dinnertime/react-hooks",
+    "utils": "pnpm --filter @dinnertime/utils"
   },
-  "peerDependencies": {
-    "react": "^18"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "^5"
-  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "vite-plugin-dts": "^3.9.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
-    "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "esbuild-plugin-file-path-extensions": "^2.1.2",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "tsup": "^8.2.1"
   }
 }
