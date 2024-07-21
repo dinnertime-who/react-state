@@ -24,8 +24,7 @@
     "build": "tsup"
   },
   "files": [
-    "build",
-    "src"
+    "build"
   ],
   "devDependencies": {
     "@types/react": "^18.3.3",

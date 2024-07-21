@@ -1,7 +1,7 @@
 {
   "name": "@dinnertime/utils",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "types": "build/legacy/index.d.ts",
   "main": "build/legacy/index.cjs",
@@ -34,8 +34,7 @@
     "build": "tsup"
   },
   "files": [
-    "build",
-    "src"
+    "build"
   ],
   "devDependencies": {
     "@types/react": "^18.3.3",
