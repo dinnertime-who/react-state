@@ -1,8 +1,18 @@
 import { MOBILE_AGENT_REGEX } from './constants';
 
-export const wait = async (ms: number) => {
+export function isWindowSafe() {
+  if (typeof window === 'undefined') return false;
+  return true;
+}
+
+export function isDocumentSafe() {
+  if (typeof document === 'undefined') return false;
+  return true;
+}
+
+export async function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-};
+}
 
 export function isMobile() {
   if (typeof window === 'undefined') return false;

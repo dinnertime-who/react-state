@@ -1,3 +1,4 @@
+'use client';
 import { useRef, useCallback, useEffect } from 'react';
 
 export function useThrottle<T extends (...args: any[]) => void>(

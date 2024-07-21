@@ -12,7 +12,9 @@
     "react": "^18",
     "react-dom": "^18",
     "next": "14.2.5",
-    "@dinnertime/react-state": "workspace:../../packages/react-state"
+    "@dinnertime/react-state": "workspace:../../packages/react-state",
+    "@dinnertime/react-hooks": "workspace:../../packages/react-hooks",
+    "@dinnertime/utils": "workspace:../../packages/utils"
   },
   "devDependencies": {
     "typescript": "^5",
