@@ -1,5 +1,2 @@
-export {
-  TextContextProvider, //
-  useTestContext,
-  useTestQuery,
-} from './context/test-context';
+export { createGlobalContext, createScopedContext } from './context';
+export { useSimpleContext, useMergedContext } from './hook';
