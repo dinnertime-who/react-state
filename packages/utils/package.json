@@ -1,0 +1,52 @@
+{
+  "name": "@dinnertime/utils",
+  "private": false,
+  "version": "0.1.2",
+  "type": "module",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
+    },
+    "./constants": {
+      "import": {
+        "types": "./build/modern/constants/index.d.ts",
+        "default": "./build/modern/constants/index.js"
+      },
+      "require": {
+        "types": "./build/modern/constants/index.d.cts",
+        "default": "./build/modern/constants/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup"
+  },
+  "files": [
+    "build"
+  ],
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "typescript": "^5.5.3",
+    "vite": "^4.5.3",
+    "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "@tanstack/react-query": "^5"
+  }
+}
