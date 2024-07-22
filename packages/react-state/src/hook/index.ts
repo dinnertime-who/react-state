@@ -3,8 +3,11 @@ import type {
   SnapshotDispatcher,
   SnapshotPromiseDispatcher,
   SimpleContext,
+  SimpleHttpContext,
 } from '../context/types';
 import { createGlobalContext } from '../context';
+import { useQuery } from '@tanstack/react-query';
+import { queryClient } from '../constants';
 
 const createdCount = createGlobalContext<Map<string, number>>(new Map());
 
@@ -148,5 +151,57 @@ export function useMergedContext<
     effect,
     compute,
     isDispatching,
+  };
+}
+
+export function useHttpContext<
+  T extends readonly SimpleContext<unknown>[] | [],
+  R,
+>(context: SimpleHttpContext<T, R>) {
+  const hooks = context
+    .getContexts()
+    .map((context) => useSimpleContext(context));
+
+  const queryKey = [...hooks.map(({ value }) => value), context.name];
+
+  const { data, isFetching, isLoading, isRefetching, isPending } = useQuery(
+    {
+      queryKey,
+      queryFn: async ({ queryKey }) => {
+        const callback = context.getCallback();
+        const contexts = queryKey.slice(0, queryKey.length - 1);
+        return await callback(
+          contexts as { [P in keyof T]: ReturnType<T[P]['getSnapshot']> },
+        );
+      },
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchIntervalInBackground: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retryOnMount: false,
+    },
+    queryClient,
+  );
+
+  const effect = (fn: (prevData: typeof data) => any | Promise<any>) =>
+    React.useEffect(() => {
+      fn(data);
+    }, [data]);
+
+  const compute = <R>(fn: (prevData: typeof data) => R) =>
+    React.useMemo(() => fn(data), [data]);
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey });
+
+  return {
+    value: data,
+    effect,
+    compute,
+    isFetching: React.useMemo(
+      () => isFetching || isLoading || isRefetching || isPending,
+      [isFetching, isLoading, isRefetching, isPending],
+    ),
+    invalidate,
   };
 }

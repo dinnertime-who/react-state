@@ -34,6 +34,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "peerDependencies": {
+    "@tanstack/react-query": "^5",
     "react": "^18",
     "react-dom": "^18"
   }

@@ -1,2 +1,6 @@
-export { createGlobalContext, createScopedContext } from './context';
-export { useSimpleContext, useMergedContext } from './hook';
+export {
+  createGlobalContext,
+  createSimpleContext,
+  createHttpContext,
+} from './context';
+export { useSimpleContext, useMergedContext, useHttpContext } from './hook';

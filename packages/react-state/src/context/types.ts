@@ -1,3 +1,5 @@
+import { ContextStore } from '../constants';
+
 type Listner = () => void;
 
 export type SnapshotDispatcher<Snapshot> = (prev: Snapshot) => Snapshot;
@@ -44,7 +46,6 @@ export abstract class SimpleContext<Snapshot> {
 
   cleanSnapshot() {
     this.snapshot = this.initialValue;
-    this.emitChange();
   }
 
   emitChange() {
@@ -54,16 +55,24 @@ export abstract class SimpleContext<Snapshot> {
   }
 }
 
-export class ContextStore {
-  private static id = 0;
-  private static NAME_PREFIX = 'SC';
-  private static GLOBAL_NAME_PREFIX = `${this.NAME_PREFIX}:Glob`;
+export abstract class SimpleHttpContext<
+  T extends readonly SimpleContext<unknown>[] | [],
+  R,
+> {
+  public readonly name = ContextStore.getNextHttpStoreName();
+  constructor(
+    protected readonly callback: (contexts: {
+      [P in keyof T]: ReturnType<T[P]['getSnapshot']>;
+    }) => R | Promise<R>,
+    protected readonly contexts: T,
+  ) {}
 
-  static getNextStoreName() {
-    return `${this.NAME_PREFIX}:${this.id++}`;
+  getCallback() {
+    return this.callback;
   }
-
-  static getNextGlobalStoreName() {
-    return `${this.GLOBAL_NAME_PREFIX}:${this.id++}`;
+  getContexts() {
+    return this.contexts as {
+      [P in keyof T]: T[P];
+    };
   }
 }
