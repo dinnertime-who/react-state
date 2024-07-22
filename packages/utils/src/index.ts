@@ -45,3 +45,19 @@ export function safeDivide(
   if (!parseInt) return result;
   return Number.isInteger(result) ? result : Math.ceil(result);
 }
+
+export class TypedPromise {
+  static async allSettled<T extends readonly unknown[] | []>(promiseList: T) {
+    const settled = await Promise.allSettled(promiseList);
+
+    return {
+      fullfiled: settled.filter((value) => value.status === 'fulfilled') as {
+        [P in keyof T]: PromiseFulfilledResult<Awaited<T[P]>>;
+      },
+      rejected: settled.filter((value) => value.status === 'rejected') as {
+        [P in keyof T]: PromiseRejectedResult;
+      },
+      settled,
+    };
+  }
+}
