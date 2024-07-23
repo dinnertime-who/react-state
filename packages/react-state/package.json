@@ -1,6 +1,26 @@
 {
   "name": "@dinnertime/react-state",
-  "version": "0.1.1",
+  "version": "0.1.11",
+  "author": {
+    "name": "Taehun Bak",
+    "email": "dinnertime.dev@gmail.com",
+    "url": "https://github.com/dinnertime-who"
+  },
+  "homepage": "https://github.com/dinnertime-who/react-state",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/dinnertime-who/react-state"
+  },
+  "keywords": [
+    "simple",
+    "frontend",
+    "typescript",
+    "utils",
+    "react",
+    "nextjs",
+    "context",
+    "state management"
+  ],
   "type": "module",
   "types": "build/index.d.ts",
   "main": "build/index.js",

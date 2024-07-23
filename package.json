@@ -2,6 +2,23 @@
   "name": "root",
   "private": false,
   "version": "0.1.0",
+  "license": "MIT",
+  "author": {
+    "name": "Taehun Bak",
+    "email": "dinnertime.dev@gmail.com",
+    "url": "https://github.com/dinnertime-who"
+  },
+  "homepage": "https://github.com/dinnertime-who/react-state",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/dinnertime-who/react-state"
+  },
+  "keywords": [
+    "simple",
+    "frontend",
+    "typescript",
+    "utils"
+  ],
   "scripts": {
     "react-app": "pnpm --filter react-app",
     "next-app": "pnpm --filter next-app",
@@ -9,9 +26,6 @@
     "react-hooks": "pnpm --filter @dinnertime/react-hooks",
     "utils": "pnpm --filter @dinnertime/utils"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
