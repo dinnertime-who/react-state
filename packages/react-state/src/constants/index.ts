@@ -1,6 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 
-export const queryClient = new QueryClient();
+export const SimpleHttpQueryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 0, gcTime: 0 } },
+});
 
 export class ContextStore {
   private static id = 0;

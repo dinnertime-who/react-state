@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import type {
   SnapshotDispatcher,
@@ -5,11 +7,11 @@ import type {
   SimpleContext,
   SimpleHttpContext,
 } from '../context/types';
-import { createGlobalContext } from '../context';
+import { createCountContext } from '../context';
 import { useQuery } from '@tanstack/react-query';
-import { queryClient } from '../constants';
+import { SimpleHttpQueryClient } from '../constants';
 
-const createdCount = createGlobalContext<Map<string, number>>(new Map());
+const createdCount = createCountContext<Map<string, number>>(new Map());
 
 function useContextCount<T>(context: SimpleContext<T>) {
   const countStore = React.useSyncExternalStore(
@@ -164,25 +166,26 @@ export function useHttpContext<
 
   const queryKey = [...hooks.map(({ value }) => value), context.name];
 
-  const { data, isFetching, isLoading, isRefetching, isPending } = useQuery(
-    {
-      queryKey,
-      queryFn: async ({ queryKey }) => {
-        const callback = context.getCallback();
-        const contexts = queryKey.slice(0, queryKey.length - 1);
-        return await callback(
-          contexts as { [P in keyof T]: ReturnType<T[P]['getSnapshot']> },
-        );
-      },
-      refetchInterval: false,
-      refetchOnMount: false,
-      refetchIntervalInBackground: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      retryOnMount: false,
+  const { data, isFetching, isLoading, isRefetching, isPending } = useQuery({
+    queryKey,
+    queryFn: async ({ queryKey }) => {
+      console.log(queryKey);
+      const callback = context.getCallback();
+      const contexts = queryKey.slice(0, queryKey.length - 1);
+      return await callback(
+        contexts as { [P in keyof T]: ReturnType<T[P]['getSnapshot']> },
+      );
     },
-    queryClient,
-  );
+    placeholderData: (previousData) => previousData || context.getInitialData(),
+    refetchInterval: false,
+    refetchOnMount: false,
+    refetchIntervalInBackground: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retryOnMount: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
 
   const effect = (fn: (prevData: typeof data) => any | Promise<any>) =>
     React.useEffect(() => {
@@ -192,7 +195,8 @@ export function useHttpContext<
   const compute = <R>(fn: (prevData: typeof data) => R) =>
     React.useMemo(() => fn(data), [data]);
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey });
+  const invalidate = () =>
+    SimpleHttpQueryClient.invalidateQueries({ queryKey });
 
   return {
     value: data,
