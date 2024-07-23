@@ -1,20 +1,16 @@
 {
   "name": "@dinnertime/react-hooks",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
-  "types": "build/legacy/index.d.ts",
-  "main": "build/legacy/index.cjs",
-  "module": "build/legacy/index.js",
+  "types": "build/index.d.ts",
+  "main": "build/index.js",
+  "module": "build/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./build/modern/index.d.ts",
-        "default": "./build/modern/index.js"
-      },
-      "require": {
-        "types": "./build/modern/index.d.cts",
-        "default": "./build/modern/index.cjs"
+        "types": "./build/index.d.ts",
+        "default": "./build/index.js"
       }
     },
     "./package.json": "./package.json"
