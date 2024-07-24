@@ -163,26 +163,27 @@ export function useHttpContext<
 
   const queryKey = [...hooks.map(({ value }) => value), context.name];
 
-  const { data, isFetching, isLoading, isRefetching, isPending } = useQuery({
-    queryKey,
-    queryFn: async ({ queryKey }) => {
-      console.log(queryKey);
-      const callback = context.getCallback();
-      const contexts = queryKey.slice(0, queryKey.length - 1);
-      return await callback(
-        contexts as { [P in keyof T]: ReturnType<T[P]['getSnapshot']> },
-      );
-    },
-    placeholderData: (previousData) => previousData || context.getInitialData(),
-    refetchInterval: false,
-    refetchOnMount: false,
-    refetchIntervalInBackground: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-    retryOnMount: false,
-    staleTime: Infinity,
-    gcTime: Infinity,
-  });
+  const { data, isFetching, isLoading, isRefetching, isPending, refetch } =
+    useQuery({
+      queryKey,
+      queryFn: async ({ queryKey }) => {
+        const callback = context.getCallback();
+        const contexts = queryKey.slice(0, queryKey.length - 1);
+        return await callback(
+          contexts as { [P in keyof T]: ReturnType<T[P]['getSnapshot']> },
+        );
+      },
+      placeholderData: (previousData) =>
+        previousData || context.getInitialData(),
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchIntervalInBackground: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retryOnMount: false,
+      staleTime: Infinity,
+      gcTime: Infinity,
+    });
 
   const effect = (fn: (prevData: typeof data) => any | Promise<any>) =>
     React.useEffect(() => {
@@ -203,6 +204,7 @@ export function useHttpContext<
       () => isFetching || isLoading || isRefetching || isPending,
       [isFetching, isLoading, isRefetching, isPending],
     ),
+    refetch,
     invalidate,
   };
 }
