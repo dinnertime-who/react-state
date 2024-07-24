@@ -65,9 +65,6 @@ export function useSimpleContext<T>(context: SimpleContext<T>) {
     () => context.getServerSnapshot(),
   );
 
-  function dispatch(newSnap: T): void;
-  function dispatch(newSnap: SnapshotDispatcher<T>): void;
-  function dispatch(newSnap: SnapshotPromiseDispatcher<T>): void;
   function dispatch(
     newSnap: T | SnapshotDispatcher<T> | SnapshotPromiseDispatcher<T>,
   ) {

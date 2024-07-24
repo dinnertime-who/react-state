@@ -1,6 +1,6 @@
 {
   "name": "@dinnertime/react-state",
-  "version": "0.1.12",
+  "version": "0.1.2",
   "author": {
     "name": "Taehun Bak",
     "email": "dinnertime.dev@gmail.com",
@@ -41,6 +41,9 @@
   "files": [
     "build"
   ],
+  "dependencies": {
+    "@tanstack/react-query": "^5"
+  },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
