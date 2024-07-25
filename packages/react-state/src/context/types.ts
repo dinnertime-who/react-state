@@ -1,4 +1,5 @@
-import { ContextStore } from '../constants';
+import { dehydrate } from '@tanstack/react-query';
+import { ContextStore, SimpleHttpQueryClient } from '../constants';
 
 type Listner = () => void;
 
@@ -83,5 +84,8 @@ export abstract class SimpleHttpContext<
   }
   getInitialData() {
     return this.initialData as InitialData<R>;
+  }
+  dehydrate() {
+    return dehydrate(SimpleHttpQueryClient);
   }
 }
