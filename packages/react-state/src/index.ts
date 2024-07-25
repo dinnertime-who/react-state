@@ -10,3 +10,4 @@ export {
   SimpleHttpQueryProvider,
   SimpleHttpPrefetchBoundary,
 } from './server-fetch/provider';
+export { SimpleHttpQueryClient } from './constants';
