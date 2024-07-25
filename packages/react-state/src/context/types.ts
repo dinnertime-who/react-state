@@ -15,7 +15,7 @@ export abstract class SimpleContext<Snapshot> {
   public readonly name: string = '';
 
   constructor(
-    protected readonly initialValue: Snapshot, //
+    protected initialValue: Snapshot, //
     public readonly scope: 'global' | 'scoped',
     skipName: boolean = false,
   ) {
@@ -42,6 +42,11 @@ export abstract class SimpleContext<Snapshot> {
 
   getSnapshot() {
     return this.snapshot;
+  }
+
+  setServerSnapshot(initialValue: Snapshot) {
+    this.initialValue = initialValue;
+    this.setSnapshot(initialValue);
   }
 
   getServerSnapshot() {
