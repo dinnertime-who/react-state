@@ -15,11 +15,11 @@ export abstract class SimpleContext<Snapshot> {
   public readonly name: string = '';
 
   constructor(
-    protected initialValue: Snapshot, //
+    protected serverSnapshot: Snapshot, //
     public readonly scope: 'global' | 'scoped',
     skipName: boolean = false,
   ) {
-    this.snapshot = initialValue;
+    this.snapshot = serverSnapshot;
     if (skipName === false) {
       this.name =
         scope === 'global'
@@ -44,17 +44,16 @@ export abstract class SimpleContext<Snapshot> {
     return this.snapshot;
   }
 
-  setServerSnapshot(initialValue: Snapshot) {
-    this.initialValue = initialValue;
-    this.setSnapshot(initialValue);
+  setServerSnapshot(serverSnapshot: Snapshot) {
+    this.serverSnapshot = serverSnapshot;
   }
 
   getServerSnapshot() {
-    return this.initialValue;
+    return this.serverSnapshot;
   }
 
   cleanSnapshot() {
-    this.snapshot = this.initialValue;
+    this.snapshot = this.serverSnapshot;
   }
 
   emitChange() {

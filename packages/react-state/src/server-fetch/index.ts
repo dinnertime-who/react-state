@@ -35,7 +35,7 @@ export const serverFetchHttpContext = async <
     httpContext.name,
   ];
 
-  await SimpleHttpQueryClient.fetchQuery({
+  return await SimpleHttpQueryClient.fetchQuery({
     queryKey,
     queryFn: async ({ queryKey }) => {
       const callback = httpContext.getCallback();
