@@ -176,11 +176,11 @@ export function useHttpContext<
       placeholderData: (previousData) =>
         previousData || context.getInitialData(),
       refetchInterval: false,
-      refetchOnMount: false,
       refetchIntervalInBackground: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      retryOnMount: false,
+      retryOnMount: true,
+      refetchOnMount: true,
       staleTime: Infinity,
       gcTime: Infinity,
     });
