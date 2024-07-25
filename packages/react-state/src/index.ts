@@ -5,7 +5,7 @@ export {
   EmptyContext,
 } from './context';
 export { useSimpleContext, useMergedContext, useHttpContext } from './hook';
-export { prefetchHttpContext, severFetchHttpContext } from './server-fetch';
+export { prefetchHttpContext, serverFetchHttpContext } from './server-fetch';
 export {
   SimpleHttpQueryProvider,
   SimpleHttpPrefetchBoundary,

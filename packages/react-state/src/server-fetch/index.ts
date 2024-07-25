@@ -24,7 +24,7 @@ export const prefetchHttpContext = async <
   });
 };
 
-export const severFetchHttpContext = async <
+export const serverFetchHttpContext = async <
   T extends readonly SimpleContext<unknown>[] | [],
   R,
 >(
