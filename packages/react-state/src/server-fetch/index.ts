@@ -1,5 +1,9 @@
 import { SimpleHttpQueryClient } from '../constants';
 import type { SimpleContext, SimpleHttpContext } from '../context/types';
+import {
+  type QueryClient,
+  dehydrate as reactQueryDehydrate,
+} from '@tanstack/react-query';
 
 export const prefetchHttpContext = async <
   T extends readonly SimpleContext<unknown>[] | [],
@@ -46,3 +50,7 @@ export const severFetchHttpContext = async <
     },
   });
 };
+
+export function dehydrate(queryClient: QueryClient) {
+  return reactQueryDehydrate(queryClient);
+}

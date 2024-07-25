@@ -1,12 +1,7 @@
 'use client';
 
 import { SimpleHttpQueryClient } from '../constants';
-import {
-  HydrationBoundary,
-  type QueryClient,
-  QueryClientProvider,
-  dehydrate as reactQueryDehydrate,
-} from '@tanstack/react-query';
+import { HydrationBoundary, QueryClientProvider } from '@tanstack/react-query';
 
 export function SimpleHttpQueryProvider({
   children,
@@ -28,8 +23,4 @@ export function SimpleHttpPrefetchBoundary({
   state?: unknown;
 }) {
   return <HydrationBoundary state={state}>{children}</HydrationBoundary>;
-}
-
-export function dehydrate(queryClient: QueryClient) {
-  return reactQueryDehydrate(queryClient);
 }
