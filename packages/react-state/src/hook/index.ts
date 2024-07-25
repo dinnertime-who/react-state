@@ -179,8 +179,8 @@ export function useHttpContext<
       refetchIntervalInBackground: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      retryOnMount: true,
-      refetchOnMount: true,
+      retryOnMount: false,
+      refetchOnMount: false,
       staleTime: Infinity,
       gcTime: Infinity,
     });
