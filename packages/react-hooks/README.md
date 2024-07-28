@@ -137,3 +137,27 @@ const OnlineStatus = () => {
   return null;
 };
 ```
+
+## useLocalStorage
+
+localStorage로 state 관리
+
+```ts
+function useLocalStorage<T>(key: string): {
+  value: T | null;
+  isDispatching: boolean;
+  dispatch: (
+    value:
+      | (T | null)
+      | ((newValue: T | null) => T | null)
+      | ((newValue: T | null) => Promise<T | null>),
+  ) => void;
+  effect: (fn: (data: T | null) => any | Promise<any>) => void;
+  compute: <R>(fn: (data: T | null) => R) => R;
+};
+
+// ex
+
+const { value, isDispatching, dispatch, effect, compute } =
+  useLocalStorage<ValueType>('Favorites');
+```

@@ -1,7 +1,7 @@
 {
   "name": "@dinnertime/react-hooks",
   "private": false,
-  "version": "0.1.13",
+  "version": "0.2.0",
   "author": {
     "name": "Taehun Bak",
     "email": "dinnertime.dev@gmail.com",
@@ -21,7 +21,8 @@
     "nextjs",
     "hooks",
     "debounce",
-    "throttle"
+    "throttle",
+    "localStorage"
   ],
   "type": "module",
   "types": "build/index.d.ts",
@@ -54,5 +55,8 @@
   "peerDependencies": {
     "react": "^18",
     "react-dom": "^18"
+  },
+  "dependencies": {
+    "@dinnertime/utils": "^0.2.13"
   }
 }
