@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+// React 공식문서의 useSyncExternalStore 예시를 그대로 가져옴
+// https://ko.react.dev/reference/react/useSyncExternalStore#subscribing-to-a-browser-api
 function getSnapshot() {
   return window.navigator.onLine;
 }

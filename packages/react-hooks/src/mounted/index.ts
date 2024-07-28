@@ -7,7 +7,7 @@ export const useMounted = (executor: () => any | Promise<any>) => {
   }, []);
 };
 
-export const useUnMounted = (executor: () => any | Promise<any>) => {
+export const useUnmounted = (executor: () => any | Promise<any>) => {
   React.useEffect(() => {
     return () => {
       executor();
