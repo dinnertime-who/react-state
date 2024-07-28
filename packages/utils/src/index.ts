@@ -1,13 +1,11 @@
 import { MOBILE_AGENT_REGEX } from './constants';
 
 export function isWindowSafe() {
-  if (typeof window === 'undefined') return false;
-  return true;
+  return typeof window !== 'undefined';
 }
 
 export function isDocumentSafe() {
-  if (typeof document === 'undefined') return false;
-  return true;
+  return typeof document !== 'undefined';
 }
 
 export async function wait(ms: number) {
@@ -15,15 +13,15 @@ export async function wait(ms: number) {
 }
 
 export function isMobile() {
-  if (typeof window === 'undefined') return false;
-  if (!window.navigator || !window.navigator.userAgent) return false;
+  if (!isWindowSafe() || !window.navigator || !window.navigator.userAgent)
+    return false;
   return MOBILE_AGENT_REGEX.test(window.navigator.userAgent);
 }
 
 export function getDocumentCookie(name: string) {
-  if (typeof document === 'undefined') return '';
-  if (!document.cookie) return '';
+  if (!isDocumentSafe() || !document.cookie) return '';
 
+  // Chat Gpt로 작성된 코드입니다.
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
 
@@ -52,10 +50,10 @@ export class TypedPromise {
 
     return {
       fullfiled: settled.filter((value) => value.status === 'fulfilled') as {
-        [P in keyof T]: PromiseFulfilledResult<Awaited<T[P]>>;
+        -readonly [P in keyof T]: PromiseFulfilledResult<Awaited<T[P]>>;
       },
       rejected: settled.filter((value) => value.status === 'rejected') as {
-        [P in keyof T]: PromiseRejectedResult;
+        -readonly [P in keyof T]: PromiseRejectedResult;
       },
       settled,
     };
