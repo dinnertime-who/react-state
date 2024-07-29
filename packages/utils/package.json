@@ -1,7 +1,7 @@
 {
   "name": "@dinnertime/utils",
   "private": false,
-  "version": "0.2.13",
+  "version": "0.3.0",
   "author": {
     "name": "Taehun Bak",
     "email": "dinnertime.dev@gmail.com",
@@ -33,6 +33,12 @@
       "import": {
         "types": "./build/constants/index.d.ts",
         "default": "./build/constants/index.js"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./build/types/index.d.ts",
+        "default": "./build/types/index.js"
       }
     },
     "./package.json": "./package.json"

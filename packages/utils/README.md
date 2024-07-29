@@ -1,6 +1,23 @@
 # @dinnertime/utils
 
-## isWindowSafe
+### Updates
+
+---
+
+- 0.3.0
+
+  - 유틸 타입 추가 ( Primitives, SerializablePrimitives, Serializable, SerializableObject )
+  - UtilArray 추가
+  - UtilArray.removeDuplicates 추가
+  - UtilArray.isPrimitivesArray 추가
+
+- 0.2.0
+  - TypedPromise 추가
+  - TypedPromise.allSettled추가
+
+## Apis
+
+### isWindowSafe
 
 window 객체 유무 확인
 
@@ -8,7 +25,7 @@ window 객체 유무 확인
 function isWindowSafe(): boolean;
 ```
 
-## isDocumentSafe
+### isDocumentSafe
 
 document 객체 유무 확인
 
@@ -16,11 +33,11 @@ document 객체 유무 확인
 function isDocumentSafe(): boolean;
 ```
 
-### isWindowSafe와 isDocumentSafe가 필요한 이유?
+\* isWindowSafe와 isDocumentSafe가 필요한 이유?
 
 > Next.js를 이용하여 웹 애플리케이션을 개발하는 과정에서, 커스텀 훅(custom hook) 내에서 window 객체가 undefined로 나오는 문제가 종종 발생합니다. 이 문제는 주로 Next.js의 서버 사이드 렌더링(Server-Side Rendering, SSR) 특성 때문에 발생합니다. 그로인해 반복되는 코드(`typeof window === 'undefined` `typeof document === 'undefined'`)를 util로 만들었습니다.
 
-## wait
+### wait
 
 비동기 기능 동작시 일정 시간동안 대기하기
 
@@ -28,7 +45,7 @@ function isDocumentSafe(): boolean;
 function wait(ms: number): Promise<unknown>;
 ```
 
-## isMobile
+### isMobile
 
 현재 사용자가 접속한 환경이 모바일 환경인지 아닌지 확인하는 함수
 
@@ -36,7 +53,7 @@ function wait(ms: number): Promise<unknown>;
 function isMobile(): boolean;
 ```
 
-## getDocumentCookie
+### getDocumentCookie
 
 브라우저 쿠키를 이름으로 가져오기
 
@@ -44,7 +61,7 @@ function isMobile(): boolean;
 function getDocumentCookie(name: string): string;
 ```
 
-## safeDivide
+### safeDivide
 
 숫자 나누기를 안전하게 처리하는 함수
 
@@ -62,7 +79,7 @@ function safeDivide(
 ): number;
 ```
 
-## TypedPromise
+### TypedPromise
 
 Typescript 환경에서 Promise 객체를 사용할 때 불편한 부분을 개선
 
@@ -103,10 +120,54 @@ settled: { -readonly [P in keyof T]: PromiseSettledResult<Awaited<T[P]>>; };
 })()
 ```
 
-### Updates
+### UtilArray
 
----
+자주 사용되는 배열 기능을 정의
 
-- 0.2.0
-  - TypedPromise 추가
-  - TypedPromise.allSettled추가
+### UtilArray.removeDuplicates
+
+> 배열 내의 중복을 제거, 원소들이 Object 형태인 경우 지정한 key들의 값을 기준으로 중복을 제거한다.
+
+```ts
+declare class UtilArray {
+  static removeDuplicates<T extends Primitives[]>(array: T): T;
+  static removeDuplicates<T extends SerializableObject[]>(
+    array: T,
+    keys: (keyof T[number])[],
+  ): T;
+}
+
+// ex)
+UtilArray.removeDuplicates(['1', 1, 2, false, false, 'test', 2]);
+// => ['1', 1, 2, false, 'test']
+
+UtilArray.removeDuplicates(
+  [
+    { id: 1, name: 'tester' },
+    { id: 2, name: 'tester' },
+    { id: 2, name: 'tester3' },
+  ],
+  ['id'],
+);
+// => [ { id: 1, name: 'tester' }, { id: 2, name: 'tester3' }]
+
+UtilArray.removeDuplicates(
+  [
+    { id: 1, name: 'tester' },
+    { id: 2, name: 'tester' },
+    { id: 2, name: 'tester3' },
+  ],
+  ['name'],
+);
+// => [ { id: 2, name: 'tester2' }, { id: 2, name: 'tester3' }]
+
+UtilArray.removeDuplicates(
+  [
+    { id: 1, name: 'tester' },
+    { id: 2, name: 'tester' },
+    { id: 2, name: 'tester3' },
+  ],
+  ['id', 'name'],
+);
+// => [ { id: 1, name: 'tester' }, { id: 2, name: 'tester2' }, { id: 2, name: 'tester3' }]
+```
