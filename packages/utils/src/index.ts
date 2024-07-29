@@ -1,4 +1,5 @@
 import { MOBILE_AGENT_REGEX } from './constants';
+import { Primitives, SerializableObject } from './types';
 
 export function isWindowSafe() {
   return typeof window !== 'undefined';
@@ -57,5 +58,46 @@ export class TypedPromise {
       },
       settled,
     };
+  }
+}
+
+export class UtilArray {
+  static removeDuplicates<T extends Primitives[]>(array: T): T;
+  static removeDuplicates<T extends SerializableObject[]>(
+    array: T,
+    keys: (keyof T[number])[],
+  ): T;
+  static removeDuplicates<T extends Primitives[] | SerializableObject[]>(
+    array: T,
+    keys?: (keyof T[number])[],
+  ) {
+    // Primitives Array 인 경우 ( typeguard로 타입 안정성 높임 )
+    if (this.isPrimitivesArray(array)) {
+      return this.removeDuplicatesPrimitivesArray(array);
+    }
+    return this.removeDuplicatesRecordArray(array, keys! as string[]);
+  }
+
+  // 배열의 모든 원소가 Primitives(string | number | boolean | null | undefined)인지 확인
+  static isPrimitivesArray(array: unknown[]): array is Primitives[] {
+    return typeof array[0] !== 'object';
+  }
+
+  private static removeDuplicatesPrimitivesArray(array: Primitives[]) {
+    // Set으로 중복제거
+    return Array.from(new Set(array));
+  }
+
+  private static removeDuplicatesRecordArray<T extends SerializableObject[]>(
+    array: T,
+    keys: (keyof T[number])[],
+  ) {
+    // 중복 값 확인할 key 생성
+    const makeKey = (item: T[number]) =>
+      keys.reduce((acc, cur) => `${String(acc)}_${String(item[cur])}`, '');
+
+    return Array.from(
+      new Map(array.map((item) => [makeKey(item), item])).values(),
+    );
   }
 }
