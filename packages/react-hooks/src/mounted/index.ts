@@ -1,16 +1,30 @@
 'use client';
+
 import React from 'react';
 
-export const useMounted = (executor: () => any | Promise<any>) => {
+export const useMounted = <T extends () => R | Promise<R>, R>(callback: T) => {
+  const mountedRef = React.useRef(false);
+
   React.useEffect(() => {
-    executor();
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      callback();
+    }
   }, []);
 };
 
-export const useUnmounted = (executor: () => any | Promise<any>) => {
+export const useUnmounted = <T extends () => R | Promise<R>, R>(
+  callback: T,
+) => {
+  const unmountedRef = React.useRef(false);
+
   React.useEffect(() => {
     return () => {
-      executor();
+      if (!unmountedRef.current) {
+        unmountedRef.current = true;
+      } else {
+        callback();
+      }
     };
   }, []);
 };
