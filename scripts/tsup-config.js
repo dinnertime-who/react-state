@@ -10,12 +10,11 @@ import { esbuildPluginFilePathExtensions } from 'esbuild-plugin-file-path-extens
 export function modernConfig(opts) {
   return {
     entry: opts.entry,
-    format: ['esm'],
+    format: ['cjs', 'esm'],
     target: ['chrome91', 'firefox90', 'edge91', 'safari15', 'ios15', 'opera77'],
-    outDir: 'build',
+    outDir: 'build/modern',
     dts: true,
     sourcemap: true,
-    bundle: true,
     clean: true,
     esbuildPlugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],
   };

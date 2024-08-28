@@ -19,26 +19,38 @@
     "utils"
   ],
   "type": "module",
-  "types": "build/index.d.ts",
-  "main": "build/index.js",
-  "module": "build/index.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./build/index.d.ts",
-        "default": "./build/index.js"
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
       }
     },
     "./constants": {
       "import": {
-        "types": "./build/constants/index.d.ts",
-        "default": "./build/constants/index.js"
+        "types": "./build/modern/constants/index.d.ts",
+        "default": "./build/modern/constants/index.js"
+      },
+      "require": {
+        "types": "./build/modern/constants/index.d.cts",
+        "default": "./build/modern/constants/index.cjs"
       }
     },
     "./types": {
       "import": {
-        "types": "./build/types/index.d.ts",
-        "default": "./build/types/index.js"
+        "types": "./build/modern/types/index.d.ts",
+        "default": "./build/modern/types/index.js"
+      },
+      "require": {
+        "types": "./build/modern/types/index.d.cts",
+        "default": "./build/modern/types/index.cjs"
       }
     },
     "./package.json": "./package.json"
