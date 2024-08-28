@@ -1,6 +1,6 @@
 {
   "name": "@dinnertime/react-state",
-  "version": "0.1.44",
+  "version": "1.0.0",
   "author": {
     "name": "Taehun Bak",
     "email": "dinnertime.dev@gmail.com",
@@ -41,14 +41,11 @@
   "files": [
     "build"
   ],
-  "dependencies": {
-    "@tanstack/react-query": "^5"
-  },
   "devDependencies": {
-    "@types/react": "^18.3.3",
+    "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "typescript": "^5.5.3",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "typescript": "^5.5.4",
     "vite": "^4.5.3",
     "vite-plugin-dts": "^3.9.1"
   },
@@ -56,5 +53,8 @@
     "@tanstack/react-query": "^5",
     "react": "^18",
     "react-dom": "^18"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5"
   }
 }

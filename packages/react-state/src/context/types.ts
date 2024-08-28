@@ -1,11 +1,10 @@
-import { dehydrate } from '@tanstack/react-query';
-import { ContextStore, SimpleHttpQueryClient } from '../constants';
+import { ContextStore } from '.';
 
 type Listner = () => void;
 
-export type SnapshotDispatcher<Snapshot> = (prev: Snapshot) => Snapshot;
+export type StateDispatcher<Snapshot> = (prev: Snapshot) => Snapshot;
 
-export type SnapshotPromiseDispatcher<Snapshot> = (
+export type StatePromiseDispatcher<Snapshot> = (
   prev: Snapshot,
 ) => Promise<Snapshot>;
 
@@ -16,15 +15,11 @@ export abstract class SimpleContext<Snapshot> {
 
   constructor(
     protected serverSnapshot: Snapshot, //
-    public readonly scope: 'global' | 'scoped',
     skipName: boolean = false,
   ) {
     this.snapshot = serverSnapshot;
     if (skipName === false) {
-      this.name =
-        scope === 'global'
-          ? ContextStore.getNextGlobalStoreName()
-          : ContextStore.getNextStoreName();
+      this.name = ContextStore.getNextStoreName();
     }
   }
 
@@ -42,10 +37,6 @@ export abstract class SimpleContext<Snapshot> {
 
   getSnapshot() {
     return this.snapshot;
-  }
-
-  setServerSnapshot(serverSnapshot: Snapshot) {
-    this.serverSnapshot = serverSnapshot;
   }
 
   getServerSnapshot() {
@@ -88,8 +79,5 @@ export abstract class SimpleHttpContext<
   }
   getInitialData() {
     return this.initialData as InitialData<R>;
-  }
-  dehydrate() {
-    return dehydrate(SimpleHttpQueryClient);
   }
 }

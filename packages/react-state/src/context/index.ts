@@ -1,14 +1,8 @@
 import { SimpleContext, SimpleHttpContext } from './types';
 
-class GlobalContext<T> extends SimpleContext<T> {
+class SignalContext<T> extends SimpleContext<T> {
   constructor(initialValue: T) {
-    super(initialValue, 'global');
-  }
-}
-
-class ScopedContext<T> extends SimpleContext<T> {
-  constructor(initialValue: T) {
-    super(initialValue, 'scoped');
+    super(initialValue);
   }
 }
 
@@ -29,22 +23,18 @@ class HttpContext<
 
 class CountContext<T> extends SimpleContext<T> {
   constructor(initialValue: T) {
-    super(initialValue, 'global', true);
+    super(initialValue, true);
   }
 }
 export function createCountContext<T>(initialValue: T) {
   return new CountContext(initialValue);
 }
 
-export function createSimpleContext<T>(initialValue: T) {
-  return new ScopedContext(initialValue);
+export function createSignalState<T>(initialValue: T) {
+  return new SignalContext(initialValue);
 }
 
-export function createGlobalContext<T>(initialValue: T) {
-  return new GlobalContext(initialValue);
-}
-
-export function createHttpContext<
+export function createSignalHttp<
   T extends readonly SimpleContext<unknown>[] | [],
   R,
 >(
@@ -57,4 +47,18 @@ export function createHttpContext<
   return new HttpContext(cb, contexts, initialData);
 }
 
-export const EmptyContext = createSimpleContext(null);
+export class ContextStore {
+  private static id = 0;
+  private static NAME_PREFIX = 'SC';
+  private static HTTP_NAME_PREFIX = `${this.NAME_PREFIX}:Http`;
+
+  static getNextStoreName() {
+    return `${this.NAME_PREFIX}:${this.id++}`;
+  }
+
+  static getNextHttpStoreName() {
+    return `${this.HTTP_NAME_PREFIX}:${this.id++}`;
+  }
+}
+
+export const EMPTY = createSignalState(null);

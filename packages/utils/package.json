@@ -1,7 +1,7 @@
 {
   "name": "@dinnertime/utils",
   "private": false,
-  "version": "0.3.0",
+  "version": "1.0.0",
   "author": {
     "name": "Taehun Bak",
     "email": "dinnertime.dev@gmail.com",
