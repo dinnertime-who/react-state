@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { SimpleContext, SimpleHttpContext } from '../context/types';
+import { SignalContext } from '../context/common';
 import { useQuery } from '@tanstack/react-query';
 import { HttpQueryClient } from '../constants';
 import {
@@ -10,8 +10,18 @@ import {
   useDispatcher,
   useEffector,
 } from './common';
+import { SignalHttp, SignalState } from '../context';
 
-export function useSignalState<T>(context: SimpleContext<T>) {
+export type UseSignalState = ReturnType<typeof useSignalState>;
+export type UseSignalSignalHttp = ReturnType<typeof useSignalHttp>;
+
+export type StateDispatcher<Snapshot> = (prev: Snapshot) => Snapshot;
+
+export type StatePromiseDispatcher<Snapshot> = (
+  prev: Snapshot,
+) => Promise<Snapshot>;
+
+export function useSignalState<T>(context: SignalState<T>) {
   const { decrease, increase, getCount } = useContextCount(context);
   React.useEffect(() => {
     increase();
@@ -44,9 +54,9 @@ export function useSignalState<T>(context: SimpleContext<T>) {
 }
 
 export function useSignalHttp<
-  T extends readonly SimpleContext<unknown>[] | [],
+  T extends readonly SignalContext<unknown>[] | [],
   R,
->(context: SimpleHttpContext<T, R>) {
+>(context: SignalHttp<T, R>) {
   const hooks = context.getContexts().map((context) => useSignalState(context));
   const queryKey = [context.name];
 

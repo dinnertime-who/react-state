@@ -1,14 +1,20 @@
-import { ContextStore } from '.';
-
 type Listner = () => void;
 
-export type StateDispatcher<Snapshot> = (prev: Snapshot) => Snapshot;
+class SignalNameStore {
+  private static id = 0;
+  private static NAME_PREFIX = 'SC';
+  private static HTTP_NAME_PREFIX = `${this.NAME_PREFIX}:Http`;
 
-export type StatePromiseDispatcher<Snapshot> = (
-  prev: Snapshot,
-) => Promise<Snapshot>;
+  static getNextStateName() {
+    return `${this.NAME_PREFIX}:${this.id++}`;
+  }
 
-export abstract class SimpleContext<Snapshot> {
+  static getNextHttpName() {
+    return `${this.HTTP_NAME_PREFIX}:${this.id++}`;
+  }
+}
+
+export abstract class SignalContext<Snapshot> {
   protected listeners: Listner[] = [];
   protected snapshot: Snapshot;
   public readonly name: string = '';
@@ -19,7 +25,7 @@ export abstract class SimpleContext<Snapshot> {
   ) {
     this.snapshot = serverSnapshot;
     if (skipName === false) {
-      this.name = ContextStore.getNextStoreName();
+      this.name = SignalNameStore.getNextStateName();
     }
   }
 
@@ -56,11 +62,11 @@ export abstract class SimpleContext<Snapshot> {
 
 // eslint-disable-next-line
 type InitialData<ID> = ID extends Function ? never : ID;
-export abstract class SimpleHttpContext<
-  T extends readonly SimpleContext<unknown>[] | [],
+export abstract class SignalHttpContext<
+  T extends readonly SignalContext<unknown>[] | [],
   R,
 > {
-  public readonly name = ContextStore.getNextHttpStoreName();
+  public readonly name = SignalNameStore.getNextHttpName();
   constructor(
     protected readonly callback: (contexts: {
       [P in keyof T]: ReturnType<T[P]['getSnapshot']>;

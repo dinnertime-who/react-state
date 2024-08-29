@@ -1,4 +1,10 @@
-export type { StateDispatcher, StatePromiseDispatcher } from './context/types';
+export type { SignalState, SignalHttp } from './context';
+export { createSignalState, createSignalHttp } from './factory';
 
-export { createSignalState, createSignalHttp, EMPTY } from './context';
+export type {
+  StateDispatcher,
+  StatePromiseDispatcher,
+  UseSignalSignalHttp,
+  UseSignalState,
+} from './hook';
 export { useSignalState, useSignalHttp } from './hook';

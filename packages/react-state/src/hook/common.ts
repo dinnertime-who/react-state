@@ -1,16 +1,21 @@
 'use client';
 
 import * as React from 'react';
-import type {
-  SimpleContext,
-  StateDispatcher,
-  StatePromiseDispatcher,
-} from '../context/types';
-import { createCountContext } from '../context';
+import { SignalContext } from '../context/common';
+import { StateDispatcher, StatePromiseDispatcher } from './index';
 
-const createdCount = createCountContext<Map<string, number>>(new Map());
+class CountState<T> extends SignalContext<T> {
+  constructor(initialValue: T) {
+    super(initialValue, true);
+  }
+}
+const createdCount = createCountState<Map<string, number>>(new Map());
 
-export function useContextCount<T>(context: SimpleContext<T>) {
+function createCountState<T>(initialValue: T) {
+  return new CountState(initialValue);
+}
+
+export function useContextCount<T>(context: SignalContext<T>) {
   const countStore = React.useSyncExternalStore(
     (l) => createdCount.subscribe(l),
     () => createdCount.getSnapshot(),
