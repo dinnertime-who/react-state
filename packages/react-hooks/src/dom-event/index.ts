@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { type Observable, type OperatorFunction, fromEvent } from 'rxjs';
 import { debounceTime, take, throttleTime } from 'rxjs/operators';
+import { isDocumentSafe } from '@dinnertime/utils';
 
 type EventOption =
   | ({ once?: boolean } & { debounce?: never; throttle?: never })
@@ -28,14 +31,15 @@ const useEvent = <El extends HTMLElement>(
   callback: (e: Event) => void,
   option?: EventOption,
 ) => {
+  const ref = React.useRef<El>(target);
   const eventCallback = React.useCallback(callback, [callback]);
 
   React.useEffect(() => {
-    if (!target) return;
+    if (!ref.current) return;
 
     const pipeOperators = buildOperators(option);
 
-    const event$: Observable<Event> = fromEvent(target, eventName);
+    const event$: Observable<Event> = fromEvent(ref.current, eventName);
     const eventExecuted$ = event$.pipe(...pipeOperators);
     const subscription = eventExecuted$.subscribe((e) => {
       eventCallback(e);
@@ -44,7 +48,9 @@ const useEvent = <El extends HTMLElement>(
     return () => {
       subscription.unsubscribe();
     };
-  }, [eventCallback, eventName, option]);
+  }, [target, eventCallback, eventName, option]);
+
+  return ref;
 };
 
 export const useDomEvent = <El extends HTMLElement>(
@@ -52,9 +58,7 @@ export const useDomEvent = <El extends HTMLElement>(
   callback: (e: Event) => void,
   option?: EventOption,
 ) => {
-  const ref = React.useRef<El>(null);
-  useEvent(ref.current, eventName, callback, option);
-  return ref;
+  return useEvent<El>(null, eventName, callback, option);
 };
 
 export const useDocumentEvent = (
@@ -62,5 +66,7 @@ export const useDocumentEvent = (
   callback: (e: Event) => void,
   option?: EventOption,
 ) => {
-  useEvent(document.documentElement, eventName, callback, option);
+  if (isDocumentSafe()) {
+    useEvent(document?.documentElement, eventName, callback, option);
+  }
 };
