@@ -49,16 +49,15 @@ const useEvent = <El extends HTMLElement>(
       subscription.unsubscribe();
     };
   }, [target, eventCallback, eventName, option]);
-
-  return ref;
 };
 
 export const useDomEvent = <El extends HTMLElement>(
+  target: El | null,
   eventName: keyof HTMLElementEventMap,
   callback: (e: Event) => void,
   option?: EventOption,
 ) => {
-  return useEvent<El>(null, eventName, callback, option);
+  useEvent<El>(target, eventName, callback, option);
 };
 
 export const useDocumentEvent = (
