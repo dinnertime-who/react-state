@@ -1,7 +1,7 @@
 {
   "name": "@dinnertime/react-hooks",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Taehun Bak",
     "email": "dinnertime.dev@gmail.com",
@@ -49,10 +49,10 @@
     "build"
   ],
   "devDependencies": {
-    "@types/react": "^18.3.3",
+    "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "typescript": "^5.5.3",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "typescript": "^5.5.4",
     "vite": "^4.5.3",
     "vite-plugin-dts": "^3.9.1"
   },
@@ -61,6 +61,7 @@
     "react-dom": "^18"
   },
   "dependencies": {
-    "@dinnertime/utils": "^0.2.13"
+    "@dinnertime/utils": "^1.0.0",
+    "rxjs": "^7.8.1"
   }
 }
