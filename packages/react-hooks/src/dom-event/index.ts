@@ -26,7 +26,7 @@ const buildOperators = (option?: EventOption) => {
 };
 
 const useEvent = <El extends HTMLElement>(
-  target: El | null,
+  target: React.RefObject<El>,
   eventName: keyof HTMLElementEventMap,
   callback: (e: Event) => void,
   option?: EventOption,
@@ -34,11 +34,11 @@ const useEvent = <El extends HTMLElement>(
   const eventCallback = React.useCallback(callback, [callback]);
 
   React.useEffect(() => {
-    if (!target) return;
+    if (!target.current) return;
 
     const pipeOperators = buildOperators(option);
 
-    const event$: Observable<Event> = fromEvent(target, eventName);
+    const event$: Observable<Event> = fromEvent(target.current, eventName);
     const eventExecuted$ = event$.pipe(...pipeOperators);
     const subscription = eventExecuted$.subscribe((e) => {
       eventCallback(e);
@@ -51,7 +51,7 @@ const useEvent = <El extends HTMLElement>(
 };
 
 export const useDomEvent = <El extends HTMLElement>(
-  target: El | null,
+  target: React.RefObject<El>,
   eventName: keyof HTMLElementEventMap,
   callback: (e: Event) => void,
   option?: EventOption,
@@ -65,6 +65,7 @@ export const useDocumentEvent = (
   option?: EventOption,
 ) => {
   if (isDocumentSafe()) {
-    useEvent(document?.documentElement, eventName, callback, option);
+    const documentRef = React.useRef(document.documentElement);
+    useEvent(documentRef, eventName, callback, option);
   }
 };
