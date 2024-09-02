@@ -31,15 +31,14 @@ const useEvent = <El extends HTMLElement>(
   callback: (e: Event) => void,
   option?: EventOption,
 ) => {
-  const ref = React.useRef<El>(target);
   const eventCallback = React.useCallback(callback, [callback]);
 
   React.useEffect(() => {
-    if (!ref.current) return;
+    if (!target) return;
 
     const pipeOperators = buildOperators(option);
 
-    const event$: Observable<Event> = fromEvent(ref.current, eventName);
+    const event$: Observable<Event> = fromEvent(target, eventName);
     const eventExecuted$ = event$.pipe(...pipeOperators);
     const subscription = eventExecuted$.subscribe((e) => {
       eventCallback(e);
